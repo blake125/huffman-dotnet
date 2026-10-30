@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="Huffman.Core.Tests/Huffman.Core.Tests.csproj" Id="0b94e488-e7a7-4630-90a1-900bba8583cd" />
   <Project Path="Huffman.Core/Huffman.Core.csproj" />
 </Solution>
