@@ -1,1 +1,3 @@
-<Solution />
+<Solution>
+  <Project Path="Huffman.Core/Huffman.Core.csproj" />
+</Solution>
