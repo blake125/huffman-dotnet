@@ -11,7 +11,6 @@ namespace Huffman.Core
 
         public static HuffmanCodeTable FromHuffmanTree(HuffmanTree tree)
         {
-            HuffmanCodeTable table = new HuffmanCodeTable();
             byte[] lengths = new byte[256];
 
             if (tree.Root!.IsLeaf)
@@ -19,15 +18,13 @@ namespace Huffman.Core
                 lengths[(int)tree.Root.Symbol!] = 1;
             } else
             {
-                table.TraverseTree(tree.Root!, 0, lengths);
+                TraverseTree(tree.Root!, 0, lengths);
             }
 
-            table.Canonize(lengths);
-            
-            return table;
+            return FromCodeLengths(lengths);
         }
 
-        private void TraverseTree(HuffmanNode node, byte length, byte[] lengths)
+        private static void TraverseTree(HuffmanNode node, byte length, byte[] lengths)
         {
             if(node ==  null) return;
 
@@ -61,6 +58,14 @@ namespace Huffman.Core
 
                 code = code << 1;
             }
+        }
+
+        public static HuffmanCodeTable FromCodeLengths(byte[] codeLengths)
+        {
+            HuffmanCodeTable table = new HuffmanCodeTable();
+            table.Canonize(codeLengths);
+
+            return table;
         }
     }
 }
