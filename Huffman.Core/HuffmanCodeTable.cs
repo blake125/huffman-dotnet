@@ -12,34 +12,55 @@ namespace Huffman.Core
         public static HuffmanCodeTable FromHuffmanTree(HuffmanTree tree)
         {
             HuffmanCodeTable table = new HuffmanCodeTable();
+            byte[] lengths = new byte[256];
 
             if (tree.Root!.IsLeaf)
             {
-                HuffmanCode huffCode = new HuffmanCode(0, 1);
-                table.codes[(byte)tree.Root.Symbol!] = huffCode;
+                lengths[(int)tree.Root.Symbol!] = 1;
             } else
             {
-                table.TraverseTree(tree.Root!, 0, 0);
+                table.TraverseTree(tree.Root!, 0, lengths);
             }
+
+            table.Canonize(lengths);
             
             return table;
         }
 
-        private void TraverseTree(HuffmanNode node, ulong code, int length)
+        private void TraverseTree(HuffmanNode node, byte length, byte[] lengths)
         {
             if(node ==  null) return;
 
             if (node.IsLeaf)
             {
-                HuffmanCode huffCode = new HuffmanCode(code, length);
-                codes[(byte)node.Symbol!] = huffCode;
+                lengths[(byte)node.Symbol!] = length;
                 return;
             }
 
-            TraverseTree(node.Left!, code << 1, length + 1);
-            TraverseTree(node.Right!, (code << 1) | 1, length + 1);
+            length++;
+            TraverseTree(node.Left!, length, lengths);
+            TraverseTree(node.Right!, length, lengths);
         }
 
-        
+        private void Canonize(byte[] lengths)
+        {
+            ulong code = 0;
+            int maxLength = lengths.Max();
+            for (int i = 1; i <= maxLength; i++)
+            {
+                for (int j = 0; j < 256; j++)
+                {
+                    if (lengths[j] == i)
+                    {
+                        HuffmanCode c = new HuffmanCode(code, i);
+                        codes[j] = c;
+
+                        code++;
+                    }
+                }
+
+                code = code << 1;
+            }
+        }
     }
 }
