@@ -26,7 +26,7 @@ namespace Huffman.Core
 
         private static void TraverseTree(HuffmanNode node, byte length, byte[] lengths)
         {
-            if(node ==  null) return;
+            if (node == null) return;
 
             if (node.IsLeaf)
             {
@@ -66,6 +66,17 @@ namespace Huffman.Core
             table.Canonize(codeLengths);
 
             return table;
+        }
+
+        public byte[] GetCodeLengths()
+        {
+            byte[] codeLengths = new byte[256];
+            for(int i = 0; i < 256; i++)
+            {
+                codeLengths[i] = (byte)codes[i].Length;
+            }
+
+            return codeLengths;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace Huffman.Core
+﻿using System.Collections;
+using System.Runtime.CompilerServices;
+
+namespace Huffman.Core
 {
     internal class HuffmanTree
     {
@@ -50,5 +53,67 @@
             return new HuffmanTree(root);
         }
 
+        public static HuffmanTree FromHuffmanCodeTable(HuffmanCodeTable table)
+        {
+            HuffmanTree tree = new HuffmanTree(HuffmanNode.InternalNode(null, null));
+            for (int i = 0; i < 256; i++)
+            {
+                HuffmanCode code = table.Codes[i];
+                if(code.Length == 0)
+                {
+                    continue;
+                }
+
+                tree.AddPath(code, (byte)i);
+            }
+
+            return tree;
+        }
+
+        private void AddPath(HuffmanCode code, byte symbol)
+        {
+            HuffmanNode walk = Root!;
+
+            ulong path = code.Code;
+            int length = code.Length;
+            
+            while(length > 1)
+            {
+                int direction = ((int)path >> length - 1) & 1;
+                length -= 1;
+
+                if(direction == 0)
+                {
+                    if(walk.Left == null)
+                    {
+                        walk.Left = HuffmanNode.InternalNode(null, null);
+                        walk = walk.Left;
+                    } else
+                    {
+                        walk = walk.Left;
+                    }
+                } else
+                {
+                    if (walk.Right == null)
+                    {
+                        walk.Right = HuffmanNode.InternalNode(null, null);
+                        walk = walk.Right;
+                    }
+                    else
+                    {
+                        walk = walk.Right;
+                    }
+                }
+            }
+
+            int dir = ((int)path >> length - 1) & 1;
+            if( dir == 0)
+            {
+                walk.Left = HuffmanNode.LeafNode(symbol, 0);
+            } else
+            {
+                walk.Right = HuffmanNode.LeafNode(symbol, 0);
+            }
+        }
     }
 }
